@@ -1,24 +1,38 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuth } from "@/lib/auth";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "AttendAI — AI Face Recognition Attendance for Colleges" },
+      {
+        name: "description",
+        content:
+          "AttendAI marks college attendance from a single classroom photo using face recognition, with teacher review, reports and CSV export.",
+      },
+      { property: "og:title", content: "AttendAI — AI Attendance for Colleges" },
+      {
+        property: "og:description",
+        content: "Photo-based face recognition attendance with teacher review and reports.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const { user, ready } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!ready) return;
+    navigate({ to: user ? "/dashboard" : "/login" });
+  }, [ready, user, navigate]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="grid min-h-screen place-items-center app-gradient">
+      <div className="size-8 animate-spin rounded-full border-2 border-muted border-t-primary" />
     </div>
   );
 }
