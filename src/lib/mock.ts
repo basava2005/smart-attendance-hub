@@ -127,17 +127,21 @@ export const mockStudents: Student[] = firstNames.map((f, i) => ({
 }));
 
 export const mockAttendance: AttendanceRecord[] = mockStudents.flatMap((s, i) =>
-  ["2026-08-10", "2026-08-11", "2026-08-12"].map((date, d) => ({
-    id: `${s.id}-${d}`,
-    studentId: s.id,
-    studentName: s.name,
-    roll: s.roll,
-    subjectId: s.subjects[0],
-    subjectName: mockSubjects.find((x) => x.id === s.subjects[0])?.name ?? "",
-    date,
-    status: (i + d) % 5 === 0 ? "absent" : "present",
-    confidence: (i + d) % 5 === 0 ? undefined : 0.82 + ((i * 7 + d) % 17) / 100,
-  })),
+  ["2026-08-10", "2026-08-11", "2026-08-12"].map((date, d) => {
+    const subjectId = s.subjects[0] ?? "s1";
+    const absent = (i + d) % 5 === 0;
+    return {
+      id: `${s.id}-${d}`,
+      studentId: s.id,
+      studentName: s.name,
+      roll: s.roll,
+      subjectId,
+      subjectName: mockSubjects.find((x) => x.id === subjectId)?.name ?? "",
+      date,
+      status: absent ? ("absent" as const) : ("present" as const),
+      ...(absent ? {} : { confidence: 0.82 + ((i * 7 + d) % 17) / 100 }),
+    };
+  }),
 );
 
 export const mockActivity: ActivityEvent[] = [
