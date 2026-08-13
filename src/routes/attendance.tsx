@@ -32,9 +32,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/attendance")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    subject: typeof search["subject"] === "string" ? (search["subject"] as string) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { subject?: string } =>
+    typeof search["subject"] === "string" ? { subject: search["subject"] } : {},
   head: () => ({
     meta: [
       { title: "Take Attendance — AttendAI" },
